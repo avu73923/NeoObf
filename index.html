@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>STAR OBFUSCATOR</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --bg-main: #05050a;
+    --glass: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.15);
+    --neon-pink: #ff3cac;
+    --neon-blue: #2bd2ff;
+    --neon-purple: #7a5cff;
+    --text-main: #e5e7eb;
+    --text-muted: #9ca3af;
+    --success: #22ff88;
+    --font-code: 'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at 20% 20%, #1b0033, transparent 60%),
+        radial-gradient(circle at 80% 80%, #001f3f, transparent 60%),
+        linear-gradient(180deg, #03030a, #050510);
+    font-family: 'Inter', sans-serif;
+    color: var(--text-main);
+    overflow: hidden;
+}
+
+/* ===== NAV ===== */
+nav {
+    height: 64px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    background: var(--glass);
+    border-bottom: 1px solid var(--border);
+}
+
+.logo {
+    font-weight: 900;
+    letter-spacing: 0.2em;
+    color: var(--neon-pink);
+    text-shadow: 0 0 12px var(--neon-pink);
+    font-size: 1.1rem;
+}
+
+/* ===== LAYOUT ===== */
+.app-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    height: calc(100vh - 64px);
+}
+
+/* ===== SIDEBAR ===== */
+aside {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--glass);
+    backdrop-filter: blur(24px);
+    border-right: 1px solid var(--border);
+}
+
+.setting-card {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+}
+
+.setting-card h3 {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--neon-blue);
+    margin-bottom: 12px;
+}
+
+.control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+/* ===== TOGGLE ===== */
+.toggle {
+    width: 38px;
+    height: 18px;
+    position: relative;
+}
+.toggle input { opacity: 0; }
+
+.slider {
+    position: absolute;
+    inset: 0;
+    background: #111;
+    border-radius: 99px;
+    transition: 0.3s;
+}
+.slider::before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+input:checked + .slider {
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+    box-shadow: 0 0 10px var(--neon-pink);
+}
+input:checked + .slider::before {
+    transform: translateX(18px);
+}
+
+/* ===== BUTTON ===== */
+.btn-primary {
+    margin-top: auto;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: black;
+    background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+    box-shadow: 0 0 25px rgba(255,60,172,0.4);
+    transition: 0.25s;
+}
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 40px rgba(43,210,255,0.8);
+}
+.btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ===== MAIN ===== */
+.main-workspace {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.editors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    flex: 1;
+}
+
+.editor-wrap {
+    background: rgba(0,0,0,0.4);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.editor-label {
+    padding: 12px 16px;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--neon-blue);
+    border-bottom: 1px solid var(--border);
+}
+
+textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #e5e7eb;
+    padding: 16px;
+    font-family: var(--font-code);
+    font-size: 13px;
+    resize: none;
+}
+
+/* ===== TERMINAL ===== */
+.terminal {
+    height: 150px;
+    background: #000;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 12px;
+    font-family: var(--font-code);
+    font-size: 11px;
+    overflow-y: auto;
+    color: #9ca3af;
+}
+.log-entry.success {
+    color: var(--success);
+    text-shadow: 0 0 8px var(--success);
+}
+.log-entry.process {
+    color: var(--neon-blue);
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+
+    body { overflow-y: auto; }
+
+    nav {
+        height: 56px;
+        padding: 0 16px;
+    }
+
+    .logo {
+        font-size: 0.9rem;
+        letter-spacing: 0.15em;
+    }
+
+    .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    aside {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 16px;
+    }
+
+    .setting-card {
+        border-radius: 12px;
+    }
+
+    .btn-primary {
+        width: 100%;
+        margin-top: 12px;
+        font-size: 0.8rem;
+        padding: 14px;
+    }
+
+    .main-workspace { padding: 14px; }
+
+    .editors { grid-template-columns: 1fr; gap: 12px; }
+
+    textarea { font-size: 12px; min-height: 180px; }
+
+    .terminal { height: 110px; font-size: 10px; }
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <div class="logo">STAR OBFUSCATOR</div>
+    <div style="font-size:0.7rem;color:var(--text-muted);">CYBER BUILD 3.8</div>
+</nav>
+
+<div class="app-container">
+
+<aside>
+    <div class="setting-card">
+        <h3>CORE SYSTEM</h3>
+        <div class="control">
+            <span>Bytecode VM</span>
+            <label class="toggle">
+                <input type="checkbox" checked disabled>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control">
+            <span>Barcode Meta</span>
+            <label class="toggle">
+                <input type="checkbox" id="opt-barcode" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <div class="setting-card">
+        <h3>SECURITY LAYERS</h3>
+        <div class="control">
+            <span>Rotation Flow</span>
+            <label class="toggle">
+                <input type="checkbox" id="opt-rot" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control">
+            <span>XOR Matrix</span>
+            <label class="toggle">
+                <input type="checkbox" id="opt-xor" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="control">
+            <span>Inverse Binary</span>
+            <label class="toggle">
+                <input type="checkbox" id="opt-inv" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+
+    <button class="btn-primary" id="buildBtn" onclick="runHybridBuild()">OBFUSCATOR</button>
+</aside>
+
+<main class="main-workspace">
+    <div class="editors">
+        <div class="editor-wrap">
+            <div class="editor-label">SOURCE CODE</div>
+            <textarea id="input" spellcheck="false"></textarea>
+        </div>
+        <div class="editor-wrap">
+            <div class="editor-label">STAR_PAYLOAD.LUA <span style="cursor:pointer;color:var(--neon-pink);" onclick="copyResult()">[COPY]</span></div>
+            <textarea id="output" readonly spellcheck="false"></textarea>
+        </div>
+    </div>
+
+    <div class="terminal" id="logs">
+        <div class="log-entry">STAR Kernel online.</div>
+    </div>
+</main>
+
+</div>
+
+<script>
+/* ===== JS + MOBILE FRIENDLY COPY ===== */
+const $ = id => document.getElementById(id);
+
+const log = (m, t='') => {
+    const d = document.createElement('div');
+    d.className = 'log-entry ' + t;
+    d.innerText = `[${new Date().toLocaleTimeString()}] ${m}`;
+    $('logs').appendChild(d);
+    $('logs').scrollTop = $('logs').scrollHeight;
+};
+
+function randName(l=14) {
+    if ($('opt-barcode').checked) {
+        const c = ['I','l','1'];
+        return "I"+[...Array(l)].map(()=>c[Math.floor(Math.random()*c.length)]).join("");
+    }
+    return "_" + Math.random().toString(36).slice(2,11).toUpperCase();
+}
+
+const STAR_WATERMARK = `-- STAR OBFUSCATOR v3.8\n`;
+
+function wrapLayer(code,type){
+    const v_run=randName(),v_data=randName(),v_tbl=randName(),
+          v_it=randName(),v_res=randName(),v_load=randName();
+    const bytes=new TextEncoder().encode(code);
+    let processed="",logic="";
+    if(type==="rotation"){
+        const o=Math.floor(Math.random()*60)+15;
+        for(let b of bytes) processed+="\\"+((b+o)%256);
+        logic=`table.insert(${v_tbl},string.char((${v_data}:byte(${v_it})-${o})%256))`;
+    }
+    if(type==="xor"){
+        const k=Math.floor(Math.random()*254)+1;
+        for(let b of bytes) processed+="\\"+(b^k);
+        logic=`table.insert(${v_tbl},string.char(bit32.bxor(${v_data}:byte(${v_it}),${k})))`;
+    }
+    if(type==="inversion"){
+        for(let b of bytes) processed+="\\"+(255-b);
+        logic=`table.insert(${v_tbl},string.char(255-${v_data}:byte(${v_it})))`;
+    }
+    return `local function ${v_run}() local ${v_data}="${processed}" local ${v_tbl}={} for ${v_it}=1,#${v_data} do ${logic} end local ${v_res}=table.concat(${v_tbl}) local ${v_load}=(loadstring or load) if ${v_load} then local f=${v_load}(${v_res}) if f then pcall(f) end end end ${v_run}()`;
+}
+
+async function runHybridBuild(){
+    const source=$('input').value;
+    if(!source.trim()) return log("Source missing","error");
+
+    $('buildBtn').disabled=true;
+    $('logs').innerHTML="";
+    log("Hybrid obfuscation started","process");
+
+    let payload=source;
+    const layers=[];
+    if($('opt-rot').checked) layers.push("rotation");
+    if($('opt-xor').checked) layers.push("xor");
+    if($('opt-inv').checked) layers.push("inversion");
+
+    for(const l of layers){
+        payload=wrapLayer(payload,l);
+        await new Promise(r=>setTimeout(r,120));
+    }
+
+    $('output').value=STAR_WATERMARK+payload;
+    log("Build successful","success");
+    $('buildBtn').disabled=false;
+}
+
+async function copyResult() {
+    try {
+        const text = $('output').value;
+        await navigator.clipboard.writeText(text);
+        log("Copied to clipboard ✅", "success");
+    } catch (err) {
+        log("Copy failed. Try again.", "error");
+        $('output').select();
+        document.execCommand("copy");
+    }
+}
+
+$('input').value='print("Star Obfuscator Active")';
+</script>
+
+</body>
+</html>
